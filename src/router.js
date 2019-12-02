@@ -1,23 +1,16 @@
 import { Router } from 'express';
 
-import User from './app/models/User';
+import UserController from './app/controllers/UserController';
+import SessionController from './app/controllers/SessionController';
+import authMiddleware from './app/middleware/auth';
 
 const routes = new Router();
 
-routes.get('/', (req, res) => {
-  res.json({ msg: 'Hello World' });
-});
+routes.post('/users', UserController.store);
+routes.post('/sessions', SessionController.store);
 
-// Rota teste para criação de um usuário no banco
-routes.get('/teste', async (req, res) => {
-  const user = await User.create({
-    name: 'Marcos Souza',
-    email: 'marcos.souza@itws.com',
-    password_hash: '12334324',
-    provider: false,
-  });
+routes.use(authMiddleware);
 
-  return res.json(user);
-});
+routes.put('/users', UserController.update);
 
 export default routes;
